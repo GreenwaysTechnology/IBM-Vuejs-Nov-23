@@ -1549,4 +1549,524 @@ You have to try
 
 1.Options api
 2.Compositions api with imperative (setup fun) and declarative Patterns (setup attr)
+.....................................................................................
+			   Component Registrations -Creations
+.....................................................................................
+
+A vue component needs to be "registered" so that vue knows to locate its implemnetation when it is encountered in a template.
+
+
+Two Types Registration:
+
+1.Global Registrat
+
+ion 
+   Global Components
+2.Local Registration
+  Local Components
+
+Application Object:
+ It is container object which contains other objects.
+
+How to create Application object?
+
+const app=createApp(rootComponent)
+
+Here "app" is just variable which points application object
+
+Application Object having lot of methods:
+
+app.component()
+app.use()
+app.provide()
+etc...
+https://vuejs.org/api/application.html
+
+Global components;
+
+const app=createApp(rootComponent)
+
+import { createApp } from 'vue'
+
+const app = createApp({})
+
+// register an options object
+app.component('my-component', {
+  /* ... */
+})
+
+// retrieve a registered component
+const MyComponent = app.component('my-component')
+.....................................................................................
+
+How to create global components and use them?
+
+Global components and options API:
+.................................
+
+// import './assets/main.css'
+import { createApp } from 'vue'
+import StatusBar from './components/StatusBar.vue'
+
+import App from './App.vue'
+
+// createApp(App).mount('#app')
+const app = createApp(App)
+
+//Global Components
+app.component('StatusBar', StatusBar)
+
+app.mount('#app')
+
+
+.....................
+App.vue
+
+//Options Api pattern
+<script>
+// import StatusBar from './components/StatusBar.vue'
+export default {
+    components: {
+        // StatusBar
+    }
+}
+</script>
+<template>
+    <StatusBar></StatusBar>
+</template>
+
+//Composition api with setup function:
+<!-- <script>
+// import StatusBar from './components/StatusBar.vue'
+export default {
+    components: {
+        // StatusBar
+    }
+}
+</script>
+<template>
+    <StatusBar></StatusBar>
+</template> -->
+
+<script>
+export default {
+    components: {
+    },
+    setup() {
+
+    }
+}
+</script>
+<template>
+    <StatusBar></StatusBar>
+</template>
+
+//Composition api with setup function:
+
+<script setup>
+</script>
+<template>
+    <StatusBar></StatusBar>
+</template>
+.....................................................................................
+
+Code Refactoring with main.js:
+// import './assets/main.css'
+import { createApp } from 'vue'
+import StatusBar from './components/StatusBar.vue'
+
+import App from './App.vue'
+
+// // createApp(App).mount('#app')
+// const app = createApp(App)
+
+// //Global Components
+// app.component('StatusBar', StatusBar)
+
+// app.mount('#app')
+
+//chainining pattern 
+createApp(App).component('StatusBar', StatusBar).mount('#app')
+.....................................................................................
+			  Local Components and Registration
+.....................................................................................
+
+Components are registered when the child component is created.
+
+In Options and Compositions setup function:
+............................................
+<script>
+// import StatusBar from './components/StatusBar.vue'
+export default {
+    components: {
+        // StatusBar
+    }
+}
+</script>
+<template>
+    <StatusBar></StatusBar>
+</template> -->
+
+ <script>
+export default {
+    components: {
+    },
+    setup() {
+
+    }
+}
+</script>
+<template>
+    <StatusBar></StatusBar>
+</template>
+
+Compostion setup attribute:
+...........................
+
+
+<script setup>
+import StatusBar from './components/StatusBar.vue'
+</script>
+<template>
+    <StatusBar></StatusBar>
+</template>
+.....................................................................................
+			 Global components vs Local components
+.....................................................................................
+
+=>Global registration prevents build systems from removing unused components (a.k.a "tree-shaking").
+
+=>If you globally register a component but end up not using it anywhere in your app, it will still be included in the final bundle.
+
+=>Global registration makes dependency relationships less explicit in large applications. 
+
+=>It makes it difficult to locate a child component's implementation from a parent component using it.
+....................................................................................
+			  ....................................................................................
+			 Component Naming Conventions
+.....................................................................................
+
+PascalCase names are valid JavaScript identifiers. This makes it easier to import and register components in JavaScript. It also helps IDEs with auto-completion.
+
+<PascalCase /> makes it more obvious that this is a Vue component instead of a native HTML element in templates. It also differentiates Vue components from custom elements (web components).
+
+
+This is the recommended style when working with SFC or string templates. However, as discussed in DOM Template Parsing Caveats, PascalCase tags are not usable in DOM templates.
+
+The Component names can be kebab-case /dash case eg
+   <app-root>
+   <hello-world>
+   
+	Vue supports both cases , but highly recommened is Pascal Case
+
+=>This can affect long-term maintainability similar to using too many global variables.
+
+=>Global Components need to be imported inside any where
+
+App.vue
+
+<script setup>
+import Hello from './components/Hello.vue'
+</script>
+<template>
+    <!-- Pascal case -->
+    <StatusBar></StatusBar>
+    <Hello></Hello>
+    <!-- Keb-case -->
+    <status-bar></status-bar>
+    <hello></hello>
+</template>
+
+....................................................................................
+			  Vue dev tool
+....................................................................................
+
+https://devtools.vuejs.org/guide/installation.html
+.....................................................................................
+			  Templates
+.....................................................................................
+
+Template is representation of "View"
+View is runtime representation of User interface.
+View is typically DOM tree.
+
+Types of Templates:
+1.static template
+   It is having pure html code
+2.Dynmic template 
+  It is template having html code and vue instructions
+Vue instructions are special symbols and notations
+
+Template = html + vue instructions(data, events,props)
+
+
+Data Binding:
+............
+  Passsing data from the component to View and View to Component
+
+Types of Data binding:
+1.Interpolation
+2.Property and Props binding
+3.Attribute binding
+4.Event Binding
+5.Two way data binding
+6.Class and Style binding
+....................................................................................
+			  Design patterns behind user interface building
+
+1.Angular follows MVC Design pattern
+2.React follows flux design pattern.
+3.Vue follows MVC Desgin pattern.
+
+MVC
+M-Model-Data
+V-View
+C-Controller.
+
+Vue and MVC:
+
+<script>
+   // M + C ->logic
+</script>
+<template> 
+   View logic 
+</template>
+<style>
+</style>
+
+ Component = {Model+Controller(Script) ,View(template,style)}
+
+...................................................................................
+				Interpolation
+....................................................................................
+
+Transfering data(state) from (controlller) to View.
+
+State:
+  State Can be represented in two ways
+
+1.primitives - numbers,strings,boolean
+  let name='subramanian'
+  let salary=100
+  let isValid=true
+2.objects and collections -  literal object,arrays
+  
+  let profile = {
+    id:1,
+    name:'Arun'
+  }
+  let profiles = [{
+    id:1,
+    name:'Arun'
+  },{
+    id:2,
+    name:'Bala'
+  }]
+.....................................................................................
+SFC pattern:
+-Using options api
+-Using composition api
+  ->with setup function
+  ->with setup attribute
+
+
+Using Options api:
+ where we can declare data/state? How to bind in ui.
+
+let options = { 
+  data:?
+  props: ?
+  methods: ?
+}
+<script> 
+export default {
+  data:function(){
+	
+	return {}//state object
+  }
+}
+
+</script>
+
+data is function, which encapsulation state(Model)
+data fuunction must return object which encapuslate "state/model"
+
+syntax
+
+ES 5 way of declaration:
+<script> 
+export default {
+  data:function(){
+	
+	return {}//state object
+  }
+}
+
+</script>
+ES 6 Way of declaration
+
+<script> 
+export default {
+  data(){
+	
+	return {}//state object
+  }
+}
+
+</script>
+eg:
+App.vue
+<!-- State Using Options API -->
+
+<script>
+export default {
+    data() {
+        //state object
+        return {
+            name: 'Subramanian'
+        }
+    }
+}
+</script>
+<template>
+    
+</template>
+
+How to show the variable inside view (Template)?
+
+Via data binding - interpolation  {{Variable}}
+
+<!-- State Using Options API -->
+
+<script>
+export default {
+    data() {
+        //state object
+        return {
+            name: 'Subramanian'
+        }
+    }
+}
+</script>
+<template>
+    <h1>Your name is {{ name }}</h1>
+</template>
+
+More Data:
+..........
+<!-- State Using Options API -->
+
+<script>
+export default {
+    data() {
+        //state object
+        return {
+            firstName: 'Subramanian',
+            lastName: 'Murugan',
+            status: true,
+            address: {
+                city: 'Coimbatore',
+                state: 'Tamil Nadu'
+            },
+            points: 100
+
+        }
+    }
+}
+</script>
+<template>
+    <h1>Your name is {{ firstName }} {{ lastName }}</h1>
+    <h2>Status {{ status ? "Available" : "Not Available" }}</h2>
+    <h2>Address {{ address.city }} {{ address.state }}</h2>
+    <h3>Points {{ points }}</h3>
+</template>
+.....................................................................................
+			 Composition API - Using setup function
+....................................................................................
+
+export default {
+ 
+  setup(){
+
+   //return state object.
+   return { }
+ }
+
+}
+
+App.vue
+
+<!-- State Using Composition  API using setup function -->
+
+<script>
+export default {
+    setup() {
+        return {
+            firstName: 'Subramanian',
+            lastName: 'Murugan',
+            status: true,
+            address: {
+                city: 'Coimbatore',
+                state: 'Tamil Nadu'
+            },
+            points: 100
+
+        }
+    }
+}
+</script>
+<template>
+    <h1>Your name is {{ firstName }} {{ lastName }}</h1>
+    <h2>Status {{ status ? "Available" : "Not Available" }}</h2>
+    <h2>Address {{ address.city }} {{ address.state }}</h2>
+    <h3>Points {{ points }}</h3>
+</template>
+
+Use case : How to state using local variables and return state?
+
+<!-- Composition api using setup function  -->
+<script>
+export default {
+    setup() {
+        const firstName = 'Subramanian'
+        const lastName = 'Murugan'
+        const status = true
+        const address = {
+            city: 'Coimbatore',
+            state: 'Tamil Nadu'
+        }
+        const points = 100
+        return {
+            // firstName: firstName,
+            // lastName: lastName,
+            // status: true,
+            // address: address,
+            // points: points
+            firstName, lastName, status, address, points
+        }
+    }
+}
+</script>
+<template>
+    <h1>Your name is {{ firstName }} {{ lastName }}</h1>
+    <h2>Status {{ status ? "Available" : "Not Available" }}</h2>
+    <h2>Address {{ address.city }} {{ address.state }}</h2>
+    <h3>Points {{ points }}
+    </h3>
+</template>
+..................................................................................
+			Using setup attribute
+...................................................................................
+
+
+
+
+
+
+
+
+
+
+
+
 
