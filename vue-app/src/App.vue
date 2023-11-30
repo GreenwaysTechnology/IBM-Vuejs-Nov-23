@@ -1,18 +1,18 @@
-<!-- Composition api using setup attribute  -->
 <script setup>
-const firstName = 'Subramanian'
-const lastName = 'Murugan'
-const status = true
-const address = {
-    city: 'Coimbatore',
-    state: 'Tamil Nadu'
-}
-const points = 100
+import User from './components/props/User.vue';
+const name = 'Subramanian'
+const someno = 1
+const status = true 
 </script>
 <template>
-    <h1>Your name is {{ firstName }} {{ lastName }}</h1>
-    <h2>Status {{ status ? "Available" : "Not Available" }}</h2>
-    <h2>Address {{ address.city }} {{ address.state }}</h2>
-    <h3>Points {{ points }}
-    </h3>
+    <h1>Prop Validation</h1>
+    <User :name="name" />
+    <!-- App.vue?t=1701327351439:36 [Vue warn]: Invalid prop: type check failed for prop "name". Expected String with value "1", got Number with value 1. 
+      at <User name=1 > 
+      at <App> -->
+    <!-- <User :name="someno" />
+        -->
+    <User :status="status" />
+    <User status />
+    <User />
 </template>
