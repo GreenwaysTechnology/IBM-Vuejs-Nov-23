@@ -2753,19 +2753,710 @@ once if try to update, you will get warning like below.
 		   State Pattern and Event Handling
 ...................................................................................
 
+Event Handling:
+
+Event handling is one  of the most popular concept in javascript as part of DOM programming.
+Event handling helps to interact with user.
+Events are signals triggered by user or syste, send to the operating system, the software or hardware reacts according to the event.
+
+Events are classified into two category.
+
+1.Hardware events
+ Triggered by user or system, interacts with hardware devices..
+eg:
+ Moust events
+  onclick,ondbclick,onmouseenter etc...
+
+ Keyboard events
+   Onkeypress,onkeydown
+
+ Touch events
+   ontouchstart,ontouchend
+
+2.Application events
+   Attached with objects called dom objects
+   onload,oncomplete.
+.....................................................................................
+			 How event handling works
+.....................................................................................
+Event handling has been designed on the design pattern called "pub-sub"  or observer design pattern.
+
+There are two actors:
+
+1.Producer
+   The producer is something who publishes events
+2.Listeners
+   The Listener is someone who listens for event.
+
+In js:
+ Listener is function , called as callback function.
+
+function listener(event){
+   event.target.value
+}
+event is object is a  bridge between producer and listener
+
+In js, events are given by language itself.
+
+events are started with "on+eventName" - on+click="listener"
+
+addEventListener('click',listener)
+  listeners are plain js functions with event object as parameter.
 
 
+Frameworks and libs like jquery,angular,react,vue adds abstractions.
+
+We can attach event on any dom element which could be application or hardware event.
+...................................................................................
+
+Vue js and event handling:
+..........................
+Vue attaches events with any element with help of directive- "v-on"
+
+Sytnax:
+1.v-on:NameoftheEvent="listener" eg: v-on:click="update"
+2.@click="listener" eg @click="update"
 
 
+Event handling in options api:
+.............................
+<script>
+export default {
+    //listener
+    methods: {
+        onIncrement(evt) {
+            console.log('Click')
+        }
+    }
+}
+</script>
+<template>
+    <div>
+        <h1>Event Handling in Options Api</h1>
+        <button v-on:click="onIncrement">Click</button>
+        <button @click="onIncrement">Click</button>
+
+    </div>
+</template>
 
 
+Event handling in composition api-with setup function
+......................................................
+<script>
+export default {
+    setup() {
+        //listeners
+        const onIncrement = (evt) => {
+            console.log('Button is click')
+        }
+        //must be returned 
+        return {
+            onIncrement
+        }
+    }
+}
+</script>
+<template>
+    <div>
+        <h1>Event handling With Setup Function</h1>
+        <button @click="onIncrement">Update</button>
+    </div>
+</template>
 
 
+Event handling in composition api-with setup attribute:
+
+<script setup>
+//listeners
+const onIncrement = (evt) => {
+    console.log('Button is click')
+}
+</script>
+<template>
+    <div>
+        <h1>Event handling With Setup Attribute</h1>
+        <button @click="onIncrement">Update</button>
+    </div>
+</template>
+.....................................................................................
+	 How to attach more than one listener on single DOM element
+.....................................................................................
+
+<div v-on:"eventName=listener" v-on:"eventName=listener">
+<div v-on="{mouseenter:OnMouseEnter,onmouseleave:onMouseLeave}" />
+
+<script setup>
+const OnMouseEnter = () => {
+    console.log('onMouse Enter')
+}
+const OnMouseLeave = () => {
+    console.log('onMouse Leave')
+}
+</script>
+<template>
+    <div>
+        <div v-on="{ mouseenter: OnMouseEnter, mouseleave: OnMouseLeave }">Touch</div>
+    </div>
+</template>
+....................................................................................
+		 How to pass data to the event listener
+....................................................................................
+const update=(data,event) => {
+  console.log(data,event)
+}
+
+<script setup>
+const update = (data, evt) => {
+    console.log(data)
+    console.log(evt)
+}
+</script>
+<template>
+    <button @click="update('hello', $event)">Update</button>
+</template>
+
+When we pass data to the listenter, vue cant pass event implicitly, we have to pass event object explicitly via "$event" which is global event object provided by vue...
+..................................................................................
+			 State-Reactive State
+...................................................................................
+
+What is state?
+ State Means data.
+
+How to update or change or mutate the state?
+
+React uses the concept called "pure functions" to change the state.
+Angular uses the concept called "Two way data binding" to the change
+
+Vue uses the concept called "Reactive state, Reactivity" to change the change.
+
+Component state consists of reactive javascript object, when you modify them, the view updates automatically.
+
+Through evnet listener, we modify the state of object(reactive),UI Gets rerendered with lastest value.
+
+There are various programming patterns to change state in options and compostion api.
+
+Options api and state mutation:
+...............................
+
+data function returns object which is by default "reactive",when ever you change that properties of the object, ui bindings gets updated automatically.
+
+Synatx:
+
+data(){
+  //reactive
+  return { 
+    count:0
+  }
+}
+
+How to mutate?
+
+methods: {
+  onIncrement(){
+   //mutate reactive variable
+   this.count++ //mutation
+  }
+}
+
+eg:
+<script>
+export default {
+    data() {
+        //reactive variables
+        return {
+            counter: 0
+        }
+    },
+    methods: {
+        onIncrement() {
+            this.counter++
+        },
+        onDecrement() {
+            this.counter--
+        }
+    }
+}
+</script>
+<template>
+    <div>
+        <h1>Counter App-Using Options API</h1>
+        <h3>Counter : {{ counter }}</h3>
+        <button @click="onIncrement">+</button>
+        <button @click="onDecrement">-</button>
+
+    </div>
+</template>
+.....................................................................................
+			 Composition API setup function
+				   And 
+                              State Mutation
+.....................................................................................
+
+<script>
+export default {
+    setup() {
+        //state variable
+        let counter = 0
+
+        //listener 
+        const onIncrement = () => {
+            counter++
+        }
+
+        return {
+            counter,
+            onIncrement
+        }
+    }
+}
+</script>
+<template>
+    <div>
+        <h1>State Mutation-Composition api using Setup function</h1>
+        <h2>Counter : {{ counter }}</h2>
+        <button @click="onIncrement">+</button>
+    </div>
+</template>
+
+After running this code,
+   Here we are trying to mutate/update the count state variable,there is update
+happening but it does not trigger, "view update/view rerender".
+
+The reason because the variables are declared with in setup function is not reactive variables by default. so that view engine will not trigger re render.
+.................................................................................
+
+We need to convert the local variables into "reactive" variables.
+
+How to declare reactive state or how to attach reactivity feature?
+
+Composition API reactive methods:
+.................................
+
+ref()
+computed()
+reactive()
+readonly()
+watchEffect()
+watchPostEffect()
+watchSyncEffect()
+watch()
+
+etc...
+
+ref:
+ It is function which returns object  called reactive object, not value.
+
+function ref<T>(value: T): Ref<UnwrapRef<T>>
+
+interface Ref<T> {
+  value: T
+}
+
+It is type script syntax, which says that
+
+ref function takes input as value and its type can be any thing , like number,string,boolean,object,array...
+
+Return type could be based on input type...
+
+Here "T" indicates type
+
+Here "Ref" indicates Return type which is called object.
+..
+eg:
+ let counter = ref(0)
+
+Here counter is just variable not holding value rather holding object reference
+
+eg:
+<script>
+import { ref } from 'vue'
+
+export default {
+    setup() {
+        //convert counter into reactive
+        let counter = ref(0)
+
+        //listener 
+        const onIncrement = () => {
+            console.log('onIncrement')
+            counter.value++
+        }
+        const onDecrement = () => {
+            console.log('onDecrement')
+            counter.value--
+        }
+        return {
+            counter,
+            onIncrement,
+            onDecrement
+        }
+    }
+}
+</script>
+<template>
+    <div>
+        <h1>State Mutation-Composition api using Setup function</h1>
+        <h2>Counter : {{ counter }}</h2>
+        <button @click="onIncrement">+</button>
+        <button @click="onDecrement">-</button>
+    </div>
+</template>
+.....................................................................................
+			State Mutation using setup attribute
+<script setup>
+import { ref } from 'vue'
+//convert counter into reactive
+let counter = ref(0)
+//listener 
+const onIncrement = () => {
+    console.log('onIncrement')
+    counter.value++
+}
+const onDecrement = () => {
+    console.log('onDecrement')
+    counter.value--
+}
+</script>
+<template>
+    <div>
+        <h1>State Mutation-Composition api using Setup function</h1>
+        <h2>Counter : {{ counter }}</h2>
+        <button @click="onIncrement">+</button>
+        <button @click="onDecrement">-</button>
+    </div>
+</template>
+.....................................................................................
+Passing values to listener and based on that value how to mutate?
+...................................................................................
+<script setup>
+import { ref } from 'vue'
+//convert counter into reactive
+let counter = ref(0)
+//listener 
+const onIncrement = () => {
+    console.log('onIncrement')
+    counter.value++
+}
+const onDecrement = () => {
+    console.log('onDecrement')
+    counter.value--
+}
+const onIncrementBy = (payload, event) => {
+    counter.value += payload
+}
+</script>
+<template>
+    <div>
+        <h1>State Mutation-Composition api using Setup function</h1>
+        <h2>Counter : {{ counter }}</h2>
+        <button @click="onIncrement">+</button>
+        <button @click="onDecrement">-</button>
+        <button @click="onIncrementBy(5, $event)">IncrementBy</button>
+
+    </div>
+</template>
+.....................................................................................
+			Inline Listeners
+.....................................................................................
+
+We dont need a separate listener function inside script , we can declare as part of the event binding...
 
 
+<script setup>
+import { ref } from 'vue'
+//convert counter into reactive
+let counter = ref(0)
+
+const onIncrementBy = (payload, event) => {
+    counter.value += payload
+}
+</script>
+<template>
+    <div>
+        <h1>State Mutation-Composition api using Setup function</h1>
+        <h2>Counter : {{ counter }}</h2>
+        <button @click="counter++">+</button>
+        <button @click="counter--">-</button>
+        <button @click="onIncrementBy(5, $event)">IncrementBy</button>
+
+    </div>
+</template>
+.....................................................................................
+		   Mutliple reactive variables
+....................................................................................
+
+<script setup>
+import { ref } from 'vue'
+let like = ref(0)
+let dislike = ref(100)
+
+</script>
+<template>
+    <div>
+        <h2>Like : {{ like }} Dislike {{ dislike }}</h2>
+        <button @click="like++">Like</button>
+        <button @click="dislike++">Dislike</button>
+    </div>
+</template>
+.....................................................................................
+			 State and props -  Dynamic props
+.....................................................................................
+
+How to pass props from parent component to child dynamically?
+
+App.vue
+<script setup>
+import Counter from './components/props/Counter.vue';
+</script>
+<template>
+    <Counter />
+</template>
+<style></style>
+
+src/components/props/Counter.vue - Parent
+
+<script setup>
+import { ref } from 'vue';
+import CounterDisplay from './CounterDisplay.vue';
+
+const counter = ref(0)
+
+</script>
+<template>
+    <div>
+        <h1>Counter Parent</h1>
+        <CounterDisplay :counter="counter" />
+        <button @click="counter++">+</button>
+    </div>
+</template>
+
+src/components/props/CounterDisplay.vue -Child
+
+<script setup>
+defineProps({
+    counter: {
+        type: Number
+    }
+})
+</script>
+<template>
+    <h1>Counter Child</h1>
+    <h2>Counter : {{ counter }}</h2>
+</template>
+.....................................................................................
+			 Reactivity
+....................................................................................
+
+What is Reactivity?
+
+ Reactivity is one of the core vue js concept.
+
+Component state are "Reactive javascript object"
+
+The word reactivity means "changing" the state(object), whenever changes happen it publishes some events,based on events, reactions happens.
 
 
+Programming work flow in general:
+................................
 
+int x=10;
+int y=20;
+int result = x + y;
+
+When you compute this code,the runtime will execute instructions top-down pattern.
+
+if there is change in variable (like x or y), will not update result variable.
+  
+  -Sequentional programming model.
+
+What if i want to update the "result" variable value automatically when ever x or y changes.
+
+Eg:
+ Excel spread sheet is one of the best eg for reactivity programming.
+
+let A1=1
+let A2=2
+let A3 = A1+A2
+console.log(A3)=> 3
+
+Change the value of A2
+
+A2=4
+console.log(A3)=> 5
+
+Here when you mutate A1 OR A2, A3 gets updated automatically.
+
+This is what mental model of reactivity programming
+
+
+We can wrap this code inside function
+
+ let A3
+ function update(){
+   A3 = A1 + A2
+ }
+ console.log(A3)
+ if changes are dedecuted in A1 and A2 ->We need to rerun(update()
+ update()
+ console.log(A3)
+
+in order get fresh value, we have to re-run the code that updates A3
+
+Pointers:
+
+1.There should be some update function, which produces a "side effect /effect".
+  if any function which changes the state of the program called side effect.
+
+2.Here ,A1 and A2 are considered dependencies of the side effect, because which helps makes side effects.
+  According to dependencies, this effect is said to be "subscriber"
+
+When ever "A1 and A2" changed, we need to invoke "update" function,which cause side effects.
+
+It looks like event driven programming (Pub-Sub Pattern /Observerable and Observer) 
+
+ function whenDepChange(update){
+     update()
+ }
+
+ let A3
+ function update(){
+   A3 = A1 + A2
+ }
+
+ whenDepChange(function(){
+     A3 = A1 + A2
+ })
+ whenDepChange(update)
+
+Role of whenDepchange function:
+................................
+
+1.Tracking the dependencies,
+    By evaulating the expression A1 and A2 ,Whether any one of them is read or not.
+
+Vue Internal Reactivity WorkFlow:
+
+Tracker--->triggers--whenDepChange--->runs update function---returns modified state
+	
+
+...................................................................................
+			  Vue js and Reactivity
+
+Vue js uses "Reactivity subsystem" in order to track all state variables, when ever which changes happen, it inform the vue engine for re render process..
+
+In large scale we cant really track the reading and writing of local variables like the above example.
+There is no any mechanism of doing that in "plain javascript". Instead of local variables what we can do , we can intercept the reading and writing of object propeties.
+
+There are two implementations
+
+1.Intercepting property access in javascript via getters and setters.
+2.ES 6 has concept called "Proxies", through which we can track changes object 
+properties.
+
+In vue 2, setters and getters are used
+In vue 3 ,Proxies are used.
+
+Pseudo-code of Reactive apis in Vue js
+
+function ref(value){
+ const refObject={
+    get value(){
+	track(refObject,'value')
+        return value
+    }
+    set value(newValue){
+	value=newValue
+	trigger(refObject,'value')
+    }
+
+ }
+ return refObject
+}
+
+const proxy = ref(0)
+proxy.value
+.....................................................................................
+			 ref with  literal object
+....................................................................................
+
+<script setup>
+import { ref } from 'vue';
+const counter = ref({ count: 0 })
+console.log(counter)
+const onIncrement = () => {
+    counter.value.count++
+}
+</script>
+<template>
+    <h1>Counter : {{ counter.count }}</h1>
+    <button @click="onIncrement">+</button>
+</template>
+.....................................................................................
+			 reactive api
+.....................................................................................
+
+There is another api to declare reactive state, with "reactive" api.
+
+Unlike "ref" which wraps inner value in special object, reactive makes object itself is reactive.
+
+<script setup>
+import { reactive } from 'vue';
+const counter = reactive({ count: 0 })
+const onIncrement = () => {
+    counter.count++
+}
+</script>
+<template>
+    <h1 @click="onIncrement">Counter : {{ counter.count }}</h1>
+</template>
+
+ref vs reactive:
+1.reactive api takes object as parameter, like literal object, collection types such as array,map,set.
+It cant hold primitive types such as string,number,boolean..
+
+2.ref can take any type of data as parameter.
+....................................................................................
+			Deep nested Object changes
+
+=>Reactive conversion(changes) are even updated for deep nested object properties
+=>Reactive api compares every property in the object before ui is re rendered for changes
+
+let obj= { 
+ a:1
+ b:{
+   c: {
+    d:{
+      e:0
+    }
+   }
+ }
+
+}
+
+eg:
+<script setup>
+import { reactive } from 'vue';
+
+const comments = reactive({
+    like: 0, dislike: 0, recommend: {
+        rating: {
+            value: 0
+        }
+    }
+})
+
+</script>
+<template>
+    <div>
+        <h1>Reactive State Nested Object</h1>
+        <h1>Like {{ comments.like }} Dislike {{ comments.dislike }} Rating {{ comments.recommend.rating.value }}</h1>
+        <button @click="comments.like++">Like</button>
+        <button @click="comments.dislike++">Dislike</button>
+        <button @click="comments.recommend.rating.value++">Rating</button>
+
+    </div>
+</template>
 
 
 
