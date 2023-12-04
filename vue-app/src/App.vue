@@ -1,22 +1,32 @@
 <script setup>
-import { reactive } from 'vue';
+import { computed, reactive } from 'vue'
 
-const comments = reactive({
-    like: 0, dislike: 0, recommend: {
-        rating: {
-            value: 0
-        }
-    }
+const author = reactive({
+    name: 'Subramanian',
+    trainings: [
+        'vue',
+        'react',
+        'java'
+    ]
+})
+//computed Properties:
+const TotalTrainings = computed(() => {
+    console.log('computed  method')
+    return author.trainings.length > 0 ? "Yes" : "No"
 })
 
+//computed properties
+const TotalTrainingsNormal = () => {
+    console.log('TotalTrainingsNormal  method')
+    return author.trainings.length > 0 ? "Yes" : "No"
+}
 </script>
 <template>
-    <div>
-        <h1>Reactive State Nested Object</h1>
-        <h1>Like {{ comments.like }} Dislike {{ comments.dislike }} Rating {{ comments.recommend.rating.value }}</h1>
-        <button @click="comments.like++">Like</button>
-        <button @click="comments.dislike++">Dislike</button>
-        <button @click="comments.recommend.rating.value++">Rating</button>
-
-    </div>
+    {{ TotalTrainings }}
+    {{ TotalTrainings }}
+    {{ TotalTrainings }}
+    <!--  -->
+    {{ TotalTrainingsNormal() }}
+    {{ TotalTrainingsNormal() }}
+    {{ TotalTrainingsNormal() }}
 </template>
