@@ -1,32 +1,56 @@
 <script setup>
-import { computed, reactive } from 'vue'
+import { ref } from 'vue';
+import Layout from './components/slots/Layout.vue';
 
-const author = reactive({
-    name: 'Subramanian',
-    trainings: [
-        'vue',
-        'react',
-        'java'
-    ]
-})
-//computed Properties:
-const TotalTrainings = computed(() => {
-    console.log('computed  method')
-    return author.trainings.length > 0 ? "Yes" : "No"
-})
-
-//computed properties
-const TotalTrainingsNormal = () => {
-    console.log('TotalTrainingsNormal  method')
-    return author.trainings.length > 0 ? "Yes" : "No"
-}
+const header = ref('header')
 </script>
+<!-- <template>
+    <h1>Vue Application</h1>
+    <Layout>
+        <template v-slot:header>
+            <h1>Header</h1>
+        </template>
+        <template v-slot:body>
+            <h1>Body</h1>
+        </template>
+        <template v-slot:footer>
+            <h1>Footer</h1>
+        </template>
+    </Layout>
+</template> -->
+<!-- 
 <template>
-    {{ TotalTrainings }}
-    {{ TotalTrainings }}
-    {{ TotalTrainings }}
-    <!--  -->
-    {{ TotalTrainingsNormal() }}
-    {{ TotalTrainingsNormal() }}
-    {{ TotalTrainingsNormal() }}
+    <h1>Vue Application</h1>
+    <Layout>
+        <template #header>
+            <h1>Header</h1>
+        </template> -->
+        <!-- <template #default>
+            <h1>Header</h1>
+        </template>
+        <template #body>
+            <h1>Body</h1>
+        </template>
+        <template #footer>
+            <h1>Footer</h1>
+        </template>
+    </Layout> -->
+<!-- </template> --> 
+
+<template>
+    <h1>Vue Application</h1>
+    <Layout>
+        <template #[header]>
+            <h1>Header</h1>
+        </template>
+        <template #default>
+            <h1>Header</h1>
+        </template>
+        <template #body>
+            <h1>Body</h1>
+        </template>
+        <template #footer>
+            <h1>Footer</h1>
+        </template>
+    </Layout>
 </template>

@@ -1,4 +1,6 @@
 // import './assets/main.css'
+// import './assets/app.css'
+import 'bootstrap/dist/css/bootstrap.min.css'
 import { createApp } from 'vue'
 import StatusBar from './components/StatusBar.vue'
 
