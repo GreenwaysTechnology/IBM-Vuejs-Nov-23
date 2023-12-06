@@ -15,4 +15,7 @@ import App from './App.vue'
 // app.mount('#app')
 
 //chainining pattern 
-createApp(App).component('StatusBar', StatusBar).mount('#app')
+createApp(App)
+.component('StatusBar', StatusBar)
+.provide('company','vue organization')
+.mount('#app')

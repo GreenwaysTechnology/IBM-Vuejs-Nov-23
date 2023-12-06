@@ -1,56 +1,24 @@
 <script setup>
 import { ref } from 'vue';
-import Layout from './components/slots/Layout.vue';
+import { useFetch } from './composables/fetcher'
 
-const header = ref('header')
+const url = ref('https://jsonplaceholder.typicode.com/todos')
+const { data, error } = useFetch(url)
 </script>
-<!-- <template>
-    <h1>Vue Application</h1>
-    <Layout>
-        <template v-slot:header>
-            <h1>Header</h1>
-        </template>
-        <template v-slot:body>
-            <h1>Body</h1>
-        </template>
-        <template v-slot:footer>
-            <h1>Footer</h1>
-        </template>
-    </Layout>
-</template> -->
-<!-- 
 <template>
-    <h1>Vue Application</h1>
-    <Layout>
-        <template #header>
-            <h1>Header</h1>
-        </template> -->
-        <!-- <template #default>
-            <h1>Header</h1>
-        </template>
-        <template #body>
-            <h1>Body</h1>
-        </template>
-        <template #footer>
-            <h1>Footer</h1>
-        </template>
-    </Layout> -->
-<!-- </template> --> 
-
-<template>
-    <h1>Vue Application</h1>
-    <Layout>
-        <template #[header]>
-            <h1>Header</h1>
-        </template>
-        <template #default>
-            <h1>Header</h1>
-        </template>
-        <template #body>
-            <h1>Body</h1>
-        </template>
-        <template #footer>
-            <h1>Footer</h1>
-        </template>
-    </Layout>
+    <div>
+        <h1>Todo App</h1>
+        <!-- Conditional rendering : v-if...v..else-if -->
+        <div v-if="error">{{ error.message }}</div>
+        <div v-else-if="data">
+            <ul>
+                <li v-for="todo of data">
+                    {{ todo.title }}
+                </li>
+            </ul>
+        </div>
+        <div v-else>
+            <h1>Loading...</h1>
+        </div>
+    </div>
 </template>
