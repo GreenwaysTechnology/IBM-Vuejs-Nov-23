@@ -5875,15 +5875,684 @@ const { data, error } = useFetch(url)
 <style>
 
 </style>			
+.....................................................................................
+				Custom Directives
+....................................................................................
+
+Code Resuablity Patterns:
+.........................
+
+The application code can be reused in vue in various ways.
+
+1.Composables
+  Way to reuse application static logic - script code
+2.Components
+  Way to reuse user interface
+3.Directives
+  Way to resue underlying DOM features..
+
+Types of Directives:
+
+1.Built in directives
+  Directives provided by vue
+    v-on,vbind,v-text,v-if,v-for etc...
+
+2.Custom Directives
+    Directives are created by us.
+
+
+How to implement simple custom directive?
+
+Every directive is object , having low level dom features.
+
+Steps to create directive
+
+1.creative directive object
+<script setup>
+const vFocus = {
+    //define life cycle method
+    mounted: (element)=>{
+        //we can get dom element here on which you attach, then you do dom manipulation
+        element.focus()
+    }
+}
+</script>
+2.How to attach directive on html element
+<template>
+    <div class="container" style="margin-top: 50px;">
+        <input v-focus />
+    </div>
+</template>
+...................................................................................
+			 DOM Maniuplation using directives
+....................................................................................
+<script setup>
+const vHighlight = {
+    mounted: (element) => {
+        //dom listener
+        element.addEventListener('mousemove', evt => {
+            highlight('yellow', 'x-large')
+        })
+        element.addEventListener('mouseleave', evt => {
+            highlight(null, null)
+        })
+
+        const highlight = (color, size) => {
+            element.style.backgroundColor = color
+            element.style.fontSize = size
+        }
+    }
+}
+</script>
+<template>
+    <div class="container" style="margin-top: 50px;">
+        <h1 v-highlight>Hightlight Me</h1>
+    </div>
+</template>
+.....................................................................................
+			  Component Hooks /Directives Hooks
+....................................................................................
+
+Directive hooks:
+ Directive hooks are methods which are called in very life cycle of directive.
+
+created(element,binding,vnode,prevNode)
+
+beforeMount =called before the target element is inserted into dom.
+mounted()=> called before the parent component is updated.
+beforeUpdate()=> called after the parent component and all of its children have updated.
+update()=> called after before Update
+beforeMount()=>before removing element.
+unmounted()=> when component is unmounted.
+.....................................................................................
+			 Directive parameters,modifiers,args
+....................................................................................
+
+Eg:
+<input v-bind:value="msg"/>
+		     |
+                     parameter.
 
 
 
+Directives can be created at application object level.
 
 
+eg:
+ createApp(App).directive('focus',(element,binding)=>{})
+
+binding is object which hold all information about directives
 
 
+How to pass parameter to directive and set that parameter.
 
 
+ .directive('highlight', (element, binding) => {
+
+        //get input from the template 
+        console.log(binding)
+        const color = binding.value || 'yellow'
+        element.addEventListener('mousemove', evt => {
+            highlight(color, 'x-large')
+        })
+        element.addEventListener('mouseleave', evt => {
+            highlight(null, null)
+        })
+
+        const highlight = (color, size) => {
+            element.style.backgroundColor = color
+            element.style.fontSize = size
+        }
+    })
 
 
+App.vue
+<script setup>
+import { ref } from 'vue';
 
+const color = ref('pink')
+</script>
+<template>
+    <input v-focus />
+    <h1 v-highlight.value="color">Highlight Me</h1>
+
+    <h1 v-highlight>Highlight Me</h1>
+</template>
+.....................................................................................
+				Modifiers
+.....................................................................................
+Modifieres are extra information to the directive,based on that we can do actions.
+
+.directive('highlight', (element, binding) => {
+
+        //get input from the template 
+        console.log(binding)
+        let color = binding.value || 'yellow'
+
+        if (binding.modifiers.bar) {
+            color = 'green'
+        }
+
+        element.addEventListener('mousemove', evt => {
+            highlight(color, 'x-large')
+        })
+        element.addEventListener('mouseleave', evt => {
+            highlight(null, null)
+        })
+
+        const highlight = (color, size) => {
+            element.style.backgroundColor = color
+            element.style.fontSize = size
+        }
+    })
+
+App.vue
+<script setup>
+import { ref } from 'vue';
+const color = ref('pink')
+</script>
+<template>
+    <h1 v-highlight.value="color">Highlight Me</h1>
+    <!-- Directive modifie -->
+    <h2 v-highlight:foo.bar="color">Highlight with Modifer</h2>
+</template>
+.....................................................................................
+		                    Plugins
+.....................................................................................
+
+What is Plugin?
+
+   Plugins are self contained code that usually add app-top level functionality to Vue.
+
+Most of third party libs are integredted as plugin with vue echo system eg vue-router,State Management libs like vueex,pinia.
+
+Plugins are distributed as npm modules, in order to use plugins, we have to do two things
+
+Through plugins we can distribute global utility apis, objects....
+
+1. install plugin npm module
+
+eg:
+ npm install vue-router@4
+
+2.Integrate with application object
+
+ createApp(App).use(myPlugin).use(router).use(pinia)
+
+Syntax:
+
+export default {
+   install:(app,options)=>{
+     //plugin functinality
+  }
+}
+here app is application object reference
+here options are input to the plugin.
+
+We will write simple global api  - called upper case.
+
+Note:
+ Plugin apis are started with "$" eg : $uppercase, $lowercase,$titlecase,$trim
+
+
+Step 1:
+src/plugins/upppercasePlugin.js
+export default {
+    install(app, options) {
+        //application object reference inside plugin as firt arg
+        app.config.globalProperties.$uppercase = key => {
+            return key.toUpperCase()
+        }
+    }
+}
+
+Step 1:
+register plugin in application object.
+<script setup>
+</script>
+<template>
+    <!-- Use plugin -->
+    <h1>{{ $uppercase('hello how are you') }}</h1>
+</template>
+// import './assets/main.css'
+// import './assets/app.css'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import { createApp } from 'vue'
+import StatusBar from './components/StatusBar.vue'
+import uppercasePlugin from './plugins/uppercasePlugin'
+
+import App from './App.vue'
+
+// // createApp(App).mount('#app')
+// const app = createApp(App)
+
+// //Global Components
+// app.component('StatusBar', StatusBar)
+
+// app.mount('#app')
+
+//chainining pattern 
+createApp(App)
+    .component('StatusBar', StatusBar)
+    .provide('company', 'vue organization')
+    .directive('focus', (element, binding) => {
+        element.focus()
+    })
+    .directive('highlight', (element, binding) => {
+
+        //get input from the template 
+        console.log(binding)
+        let color = binding.value || 'yellow'
+
+        if (binding.modifiers.bar) {
+            color = 'green'
+        }
+
+        element.addEventListener('mousemove', evt => {
+            highlight(color, 'x-large')
+        })
+        element.addEventListener('mouseleave', evt => {
+            highlight(null, null)
+        })
+
+        const highlight = (color, size) => {
+            element.style.backgroundColor = color
+            element.style.fontSize = size
+        }
+    })
+    .use(uppercasePlugin)
+    .mount('#app')
+
+Step 3: 
+Use plugin functionality inside app.
+
+<script setup>
+</script>
+<template>
+    <!-- Use plugin -->
+    <h1>{{ $uppercase('hello how are you') }}</h1>
+</template>
+
+....................................................................................
+			 Statement Management - Pinia
+....................................................................................
+
+What is State Management?
+  
+State represents data of the compoent that may change over period of time when ever the user interacts with UI.
+
+Generally , Every Component instance already "manages" its own reactive state.
+
+eg:
+
+<script setup>
+ import {ref} from  'vue'
+
+ const count = ref(0)
+ 
+ function increment(){
+    count.value++
+ }
+ 
+</script>
+<template>
+   <h2>{{ count}}
+</template>
+
+It is self contained unit with the following parts
+
+1.state, the source of truth that drives our app.
+2.view,a declarative mapping of the state
+3.actions,the possible ways the state could change in reaction to user inputs from the view
+
+One way  data flow model:
+
+  View------->Actions----->State<------>View.
+
+Different ways of state management:
+
+1.Simple State Management using Reactivity api within component
+2.Isloate State of app using Composables" out side component.
+3.Isloate State of app using "State Managment Libs" like pinia or vuex.
+
+Vue js and State Management libs:
+
+1.Vuex
+   It is old lib which used primarily in vue 2.x, Vuex almost in maintaince mode.
+
+2.Pinia
+   It is new lib which primarily in 3.x- It is recommended lib.
+
+What is Pinia?
+  Pinia is redsign tool for vue 3 composition api.
+  Pinia works both in vue 2 and v3 application.
+
+Core Concepts:
+..............
+
+1.Store:
+   The store object which encapsulate the components's /app biz logic.
+
+How to create store?
+  Pinia provides a factory function called "defineStore"
+
+const store = defineStore('nameofStore',{})
+
+2.state : 
+  It is function inside define store which returns reactive state.
+
+3.getters
+   Getters as name suggests, it defines computed properties.
+
+4.actions:
+    it is similar to methods(listerners) which biz logic -state mutation
+
+   
+How to begin with pinia? / How to integreate pina?
+
+ Pinia is just plugin, we have to install and integrate.
+
+npm init vue@latest
+Need to install the following packages:
+create-vue@3.9.0
+Ok to proceed? (y) y
+
+Vue.js - The Progressive JavaScript Framework
+
+√ Project name: ... pinia-app
+√ Add TypeScript? ... No / Yes
+√ Add JSX Support? ... No / Yes
+√ Add Vue Router for Single Page Application development? ... No / Yes
+√ Add Pinia for state management? ... No / Yes
+√ Add Vitest for Unit Testing? ... No / Yes
+√ Add an End-to-End Testing Solution? » No
+√ Add ESLint for code quality? ... No / Yes
+
+Scaffolding project in E:\session\IBM\2023\Nov\VueJs\pinia-app...
+
+Done. Now run:
+
+  cd pinia-app
+  npm install
+  npm run dev
+
+cd pinia-app> npm install
+.....................................................................................
+
+src/main.js
+import './assets/main.css'
+
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+import App from './App.vue'
+
+const app = createApp(App)
+
+app.use(createPinia())
+
+app.mount('#app')
+
+Here "createPinia" is factory function which inserts pinia lib as part of app.
+...................................................................................
+
+Pinia Coding Style:
+1.Options api style pattern
+2.Composition api style pattern.
+
+Pinia Store setup using Options api Style:
+.........................................
+
+Step 1: 
+Declare state
+import { defineStore } from "pinia"
+
+export const useCounterStore = defineStore('counter', {
+  //state:
+  state: () => {
+    //return initali reactive State 
+    return {
+      count: 10
+    }
+  }
+})
+
+How to use the State inside component.
+<script setup>
+import { useCounterStore } from './stores/counter';
+const counterStore = useCounterStore()
+</script>
+<template>
+  <h1>State Management Using Pinia</h1>
+  <div>
+    <h1>Counter {{ counterStore.count }}</h1>
+  </div>
+</template>
+
+How to add mutation / biz logic- reactivity?
+import { defineStore } from "pinia"
+
+export const useCounterStore = defineStore('counter', {
+  //state:
+  state: () => {
+    //return initali reactive State 
+    return {
+      count: 10
+    }
+  },
+  //actions: biz logic : state mutation: reactive State 
+  actions: {
+    //methods 
+    increment() {
+      return this.count++
+    }
+  }
+})
+
+Template:
+<script setup>
+import { useCounterStore } from './stores/counter';
+const counterStore = useCounterStore()
+
+//listener which updates store 
+const onIncrement = () => {
+  counterStore.increment()
+}
+</script>
+<template>
+  <h1>State Management Using Pinia</h1>
+  <div>
+    <h1>Counter {{ counterStore.count }}</h1>
+    <button @click="onIncrement">+</button>
+  </div>
+</template>
+
+Computed Properties:Getters
+import { defineStore } from "pinia"
+
+export const useCounterStore = defineStore('counter', {
+  //state:
+  state: () => {
+    //return initali reactive State 
+    return {
+      count: 10
+    }
+  },
+  //actions: biz logic : state mutation: reactive State 
+  actions: {
+    //methods 
+    increment() {
+      return this.count++
+    }
+  },
+  //getters: Computed Properties
+  getters: {
+    value: state => state.count,
+    doubleIt: state => state.count * 2
+  }
+})
+<script setup>
+import { useCounterStore } from './stores/counter';
+const counterStore = useCounterStore()
+
+//listener which updates store 
+const onIncrement = () => {
+  counterStore.increment()
+}
+</script>
+<template>
+  <h1>State Management Using Pinia</h1>
+  <div>
+    <h1>Counter {{ counterStore.count }}</h1>
+    <h2>Getters Counter:{{counterStore.value }} Double:{{counterStore.doubleIt }}</h2>
+    <button @click="onIncrement">+</button>
+  </div>
+</template>
+.....................................................................................
+			 Compostion API Style
+.....................................................................................
+
+src/stores/like.js
+
+import { defineStore } from "pinia";
+import { computed, ref } from "vue";
+
+export const useLikeStore = defineStore('like', () => {
+    //state declaration
+    const like = ref(10)
+
+    //actions 
+    function increment() {
+        like.value++
+    }
+
+    //getters 
+    const doubleIt = computed(() => {
+        return like.value * 2
+    })
+
+
+    //return object which holds initial State 
+    return {
+        like, increment, doubleIt
+    }
+
+})
+App.vue
+<script setup>
+import { useLikeStore } from './stores/like'
+const likeStore = useLikeStore()
+</script>
+<template>
+    <h1>Like {{ likeStore.like }} double It : {{ likeStore.doubleIt }}</h1>
+    <button @click="likeStore.increment">+</button>
+</template>
+....................................................................................
+		 API Calls with Pinia Using OPITONS API
+....................................................................................
+import { defineStore } from "pinia";
+
+export const useTodoStore = defineStore('todos', {
+    state: () => {
+        return {
+            todos: null,
+            error: null
+        }
+    },
+    actions: {
+        async getTodos(url) {
+            try {
+                const response = await fetch(url)
+                const todos = await response.json()
+                this.todos = todos
+            }
+            catch (err) {
+                this.err = err
+            }
+        }
+    },
+    getters: {
+        todolist: state => state.todos
+    }
+})
+
+<script setup>
+import { onMounted } from 'vue';
+import { useTodoStore } from './stores/todosapi'
+const todosStore = useTodoStore()
+onMounted(() => {
+    todosStore.getTodos('https://jsonplaceholder.typicode.com/todos')
+})
+</script>
+<template>
+    <div>
+        <h1>Todo App using Pinia</h1>
+    </div>
+    <div v-if="todosStore.error">{{ todosStore.error.message }}</div>
+    <div v-else-if="todosStore.todos">
+        <ul>
+            <li v-for="todo of todosStore.todolist">
+                {{ todo.title }}
+            </li>
+        </ul>
+    </div>
+    <div v-else>
+        <h1>Loading...</h1>
+    </div>
+</template>
+...................................................................................
+		 API Calls with Pinia Using Composition API
+....................................................................................
+
+import { defineStore } from "pinia";
+import { ref, computed } from "vue";
+
+//compostion api and pinia
+export const useTodoStore = defineStore('todos', () => {
+    //state 
+    const todos = ref(null)
+    const error = ref(null)
+    //actions
+    async function getTodos(url) {
+        try {
+            const response = await fetch(url)
+            const todos = await response.json()
+            this.todos = todos
+        }
+        catch (err) {
+            this.err = error
+        }
+    }
+    const todolist = computed(() => {
+        return todos.value
+    })
+    return {
+        getTodos, todolist, error, todos
+    }
+
+})
+
+App.vue
+<script setup>
+import { onMounted } from 'vue';
+import { useTodoStore } from './stores/todosapi'
+const todosStore = useTodoStore()
+onMounted(() => {
+    todosStore.getTodos('https://jsonplaceholder.typicode.com/todos')
+})
+</script>
+<template>
+    <div>
+        <h1>Todo App using Pinia</h1>
+    </div>
+    <div v-if="todosStore.error">{{ todosStore.error.message }}</div>
+    <div v-else-if="todosStore.todos">
+        <ul>
+            <li v-for="todo of todosStore.todolist">
+                {{ todo.title }}
+            </li>
+        </ul>
+    </div>
+    <div v-else>
+        <h1>Loading...</h1>
+    </div>
+</template>
