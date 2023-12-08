@@ -6556,3 +6556,831 @@ onMounted(() => {
         <h1>Loading...</h1>
     </div>
 </template>
+.....................................................................................
+			 Routing- How to build single page apps
+....................................................................................
+
+SPA is type of web app built for browsers, all navigations are done by javascript and html only.
+
+SPA is called as client side routing.
+
+SPA core features:
+
+1.All Navigation is controlled by browser.
+2.From the server we get only data via apis as json format
+3.In spa only one physical page called landing page/home page.
+4.Name of the landing page would be "index.html"
+5.Rest of the application page are called "virtual pages" which are created by js dynamicallly we call "Components"
+6.Navigation is controlled by javascript object called "location and history objects"
+7.Frameworks for routing is built on the top of these objects only.
+8.In order to building routing we need "HTML 5"
+
+Routing can be implemented using plain js , html 5 and ajax, css3 itself , but in large scale we need framework, vue supports official "router" which is supplied as plugin.
+
+How to use router?
+
+npm install vue-router@4 
+
+This is for existing application...
+
+npm init vue@latest
+
+Vue.js - The Progressive JavaScript Framework
+
+√ Project name: ... router-app
+√ Add TypeScript? ... No / Yes
+√ Add JSX Support? ... No / Yes
+√ Add Vue Router for Single Page Application development? ... No / Yes
+√ Add Pinia for state management? ... No / Yes
+√ Add Vitest for Unit Testing? ... No / Yes
+√ Add an End-to-End Testing Solution? » No
+√ Add ESLint for code quality? ... No / Yes
+
+Scaffolding project in E:\session\IBM\2023\Nov\VueJs\router-app...
+
+Done. Now run:
+
+  cd router-app
+  npm install
+  npm run dev
+
+
+E:\session\IBM\2023\Nov\VueJs>cd router-app
+
+E:\session\IBM\2023\Nov\VueJs\router-app>npm install
+
+added 30 packages, and audited 31 packages in 13s
+
+6 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+.....................................................................................
+			  Steps for building Vue app with routing
+.....................................................................................
+
+your-app
+  |
+  src
+   |
+   components
+   router
+   stores
+   views
+   composables
+   plugins
+   directives
+
+views and components are both are same only.
+
+views are  components which are used to render route / page, internally which renders other compoents
+eg:
+  Like
+
+  LikeView -------------LikeComponent----stores/composables
+
+router:
+ which has route configuration.
+.....................................................................................
+
+App flow:
+  entry point is main.js
+
+App.vue is master page which has master menus and place holders
+.....................................................................................
+
+Steps:
+
+1.Route configuration.
+ Url pattern and how that url is mapped against "View".
+
+src/router/index.js
+import { createRouter, createWebHistory } from 'vue-router'
+import HomeView from '../views/HomeView.vue'
+
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
+    {
+      path: '/',
+      name: 'home',
+      component: HomeView
+    },
+    {
+      path: '/about',
+      name: 'about',
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/AboutView.vue')
+    }
+  ]
+})
+
+export default router
+
+2.main.js
+import './assets/main.css'
+
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+
+import App from './App.vue'
+import router from './router'
+
+const app = createApp(App)
+
+app.use(createPinia())
+app.use(router)
+
+app.mount('#app')
+
+3.Master Page :App.vue
+<script setup>
+import { RouterLink, RouterView } from 'vue-router'
+import HelloWorld from './components/HelloWorld.vue'
+</script>
+
+<template>
+  <header>
+    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+
+    <div class="wrapper">
+      <HelloWorld msg="You did it!" />
+
+      <nav>
+        <RouterLink to="/">Home</RouterLink>
+        <RouterLink to="/about">About</RouterLink>
+      </nav>
+    </div>
+  </header>
+
+  <RouterView />
+</template>
+
+<style scoped>
+header {
+  line-height: 1.5;
+  max-height: 100vh;
+}
+
+.logo {
+  display: block;
+  margin: 0 auto 2rem;
+}
+
+nav {
+  width: 100%;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+nav a.router-link-exact-active {
+  color: var(--color-text);
+}
+
+nav a.router-link-exact-active:hover {
+  background-color: transparent;
+}
+
+nav a {
+  display: inline-block;
+  padding: 0 1rem;
+  border-left: 1px solid var(--color-border);
+}
+
+nav a:first-of-type {
+  border: 0;
+}
+
+@media (min-width: 1024px) {
+  header {
+    display: flex;
+    place-items: center;
+    padding-right: calc(var(--section-gap) / 2);
+  }
+
+  .logo {
+    margin: 0 2rem 0 0;
+  }
+
+  header .wrapper {
+    display: flex;
+    place-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  nav {
+    text-align: left;
+    margin-left: -1rem;
+    font-size: 1rem;
+
+    padding: 1rem 0;
+    margin-top: 1rem;
+  }
+}
+</style>
+.....................................................................................
+
+Built in Router Objects/Compoents
+
+1.router-link
+  In order to create hyper links
+
+2.router-view
+  It is place holder , will display the compoent/view that corresponds to the URL,
+
+.....................................................................................
+
+Basic Url setup:
+
+import { createRouter, createWebHistory } from "vue-router"
+import HomeView from '../views/HomeView.vue'
+import AboutView from '../views/AboutView.vue'
+
+//route configuration
+const routes = [{
+  path: '/',
+  name: 'index',
+  component: HomeView
+},
+{
+  path: '/home',
+  name: 'home',
+  component: HomeView
+},
+{
+  path: '/about',
+  name: 'about',
+  component: AboutView
+}
+]
+
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes
+})
+export default router;
+
+App.vue
+<script setup>
+import { RouterLink } from 'vue-router';
+</script>
+<template>
+  <div>
+    <h1>Router app</h1>
+    <hr />
+    <nav>
+      <ul>
+        <li>
+          <RouterLink to="/home">Home</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/about">About</RouterLink>
+        </li>
+      </ul>
+    </nav>
+    <hr />
+    <!-- Place holder which display View -->
+    <RouterView />
+  </div>
+</template>
+
+views/Homeview.vue
+<script setup>
+</script>
+
+<template>
+  <main>
+    <h1>Home View</h1>
+  </main>
+</template>
+views/AboutView.vue
+<template>
+  <div class="about">
+    <h1>This is an about page</h1>
+  </div>
+</template>
+....................................................................................
+				Lazy loading 
+....................................................................................
+
+Loading the component on demand , when ever the menu is clicked.
+
+route/index.js
+
+{
+  path: '/review',
+  name: 'review',
+  //route level coding spilting 
+  //this generates a separate chunk(reivew.[hash].js)
+  //this is lazy loaded when the route is visited
+  component: () => import('../views/ReviewView.vue')
+}
+
+App.vue
+  <li>
+          <RouterLink to="/review">Review</RouterLink>
+        </li>
+      </ul>
+
+views/Review.vue
+<template>
+    <div>
+        <h1>This is Review Page</h1>
+    </div>
+</template>
+.....................................................................................
+			 Routing and compoents
+
+1.Using reactive state and props...
+
+
+src/components/like.vue
+<script setup>
+import { ref } from 'vue';
+
+const like = ref(0)
+</script>
+<template>
+    <div>
+        <h1>Likes {{ like }}</h1>
+        <button @click="like++">Like</button>
+    </div>
+</template>
+
+src/App.vue
+<script setup>
+import { RouterLink } from 'vue-router';
+</script>
+<template>
+  <div>
+    <h1>Router app</h1>
+    <hr />
+    <nav>
+      <ul>
+        <li>
+          <RouterLink to="/home">Home</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/about">About</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/review">Review</RouterLink>
+        </li>
+
+      </ul>
+    </nav>
+    <hr />
+    <!-- Place holder which display View -->
+    <RouterView />
+  </div>
+</template>
+
+src/router/index.js
+import { createRouter, createWebHistory } from "vue-router"
+import HomeView from '../views/HomeView.vue'
+import AboutView from '../views/AboutView.vue'
+
+//route configuration
+const routes = [{
+  path: '/',
+  name: 'index',
+  component: HomeView
+},
+{
+  path: '/home',
+  name: 'home',
+  component: HomeView
+},
+{
+  path: '/about',
+  name: 'about',
+  component: AboutView
+},
+{
+  path: '/review',
+  name: 'review',
+  //route level coding spilting 
+  //this generates a separate chunk(reivew.[hash].js)
+  //this is lazy loaded when the route is visited
+  component: () => import('../views/ReviewView.vue')
+}
+]
+
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes
+})
+export default router;
+.....................................................................................
+			  API call using pinia
+.....................................................................................
+
+src/stores/photostore.js
+import { defineStore } from "pinia";
+import { ref, computed } from "vue";
+
+//compostion api and pinia
+export const usePhotoStore = defineStore('photos', () => {
+    //state 
+    const photos = ref(null)
+    const error = ref(null)
+    //actions
+    async function getPhotos(url) {
+        try {
+            const response = await fetch(url)
+            const photos = await response.json()
+            this.photos = photos
+        }
+        catch (err) {
+            this.err = error
+        }
+    }
+    const photoslist = computed(() => {
+        return photos.value
+    })
+    return {
+        getPhotos, photoslist, error, photos
+    }
+
+})
+
+src/components/photo.vue
+<script setup>
+import { onMounted } from 'vue';
+import { usePhotoStore } from '../stores/photostore'
+const photosStore = usePhotoStore()
+onMounted(() => {
+    photosStore.getPhotos('https://jsonplaceholder.typicode.com/photos')
+})
+</script>
+
+<template>
+    <div v-if="photosStore.error">{{ photosStore.error.message }}</div>
+    <div v-else-if="photosStore.photos">
+        <div v-for="photo of photosStore.photoslist">
+            <h1>Album ID {{ photo.albumId }}</h1>
+            <H3>{{ photo.title }}</H3>
+            <img :src="photo.url" height="100" width="100" />
+        </div>
+    </div>
+    <div v-else>
+        <h1>Loading...</h1>
+    </div>
+</template>
+
+src/views/photoview.vue
+<script setup>
+import Photos from '@/components/Photos.vue';
+
+</script>
+<template>
+    <div>
+        <h1 style="text-align: center;">Album Page</h1>
+        <Photos />
+    </div>
+</template>
+
+router.js
+{
+  path: '/photo',
+  name: 'photo',
+  //route level coding spilting 
+  //this generates a separate chunk(reivew.[hash].js)
+  //this is lazy loaded when the route is visited
+  component: () => import('../views/PhotoView.vue')
+}
+....................................................................................
+			Dynamic routing: Master Details Page
+
+
+url patterns
+
+/photos/:id
+
+/phtos/1
+
+............
+eg:
+Master Page:
+............
+src/stores/photostore.js
+import { defineStore } from "pinia";
+import { ref, computed } from "vue";
+
+//compostion api and pinia
+export const usePhotoStore = defineStore('photos', () => {
+    //state 
+    const photos = ref(null)
+    const error = ref(null)
+    //actions
+    async function getPhotos(url) {
+        try {
+            const response = await fetch(url)
+            const photos = await response.json()
+            this.photos = photos
+        }
+        catch (err) {
+            this.err = error
+        }
+    }
+    const photoslist = computed(() => {
+        return photos.value
+    })
+    return {
+        getPhotos, photoslist, error, photos
+    }
+
+})
+
+src/components/Photos.vue
+<script setup>
+import { onMounted } from 'vue';
+import { usePhotoStore } from '../stores/photostore'
+import { RouterLink } from 'vue-router';
+
+const photosStore = usePhotoStore()
+onMounted(() => {
+    photosStore.getPhotos('https://jsonplaceholder.typicode.com/photos')
+})
+</script>
+
+<template>
+    <div v-if="photosStore.error">{{ photosStore.error.message }}</div>
+    <div v-else-if="photosStore.photos">
+        <div v-for="photo of photosStore.photoslist">
+            <h1>Album ID {{ photo.albumId }}</h1>
+            <RouterLink :to="'/photosdetails/' + photo.id">
+                <img :src="photo.url" height="100" width="100" />
+            </RouterLink>
+            <H3>{{ photo.title }}</H3>
+
+        </div>
+    </div>
+    <div v-else>
+        <h1>Loading...</h1>
+    </div>
+</template>
+
+src/views/PhotosView.vue
+<script setup>
+import Photos from '@/components/Photos.vue';
+
+</script>
+<template>
+    <div>
+        <h1 style="text-align: center;">Album Page</h1>
+        <Photos />
+    </div>
+</template>
+............................................
+Details Page
+............
+src/stores/photosdetails.js
+import { defineStore } from "pinia";
+import { ref, computed } from "vue";
+
+//compostion api and pinia
+export const usePhotoDetail = defineStore('photosDetail', () => {
+    //state 
+    const photo = ref(null)
+    const error = ref(null)
+    //actions
+    async function getPhoto(url) {
+        try {
+            const response = await fetch(url)
+            const photo = await response.json()
+            this.photo = photo
+        }
+        catch (err) {
+            this.err = error
+        }
+    }
+    const singlePhoto = computed(() => {
+        return photo.value
+    })
+    return {
+        getPhoto, singlePhoto, error, photo
+    }
+
+})
+
+src/components/PhotoDetail.vue
+<script setup>
+import { onMounted } from 'vue';
+import { usePhotoDetail } from '../stores/photodetailstore'
+const params = defineProps(['id'])
+// make api call to get particular photo.
+const photoDetailStore = usePhotoDetail()
+
+onMounted(() => {
+    photoDetailStore.getPhoto(`https://jsonplaceholder.typicode.com/photos/${params.id}`)
+})
+</script>
+
+<template>
+    <div style="margin: auto;">
+        <div v-if="photoDetailStore.error">{{ photoDetailStore.error.message }}</div>
+        <div v-else-if="photoDetailStore.photo">
+            <h1>Id {{ photoDetailStore.singlePhoto.id }}</h1>
+            <img :src="photoDetailStore.singlePhoto.url" height="500" width="500" />
+            <h3>{{ photoDetailStore.singlePhoto.title }}</h3>
+        </div>
+        <div v-else>
+            <h1>Loading...</h1>
+        </div>
+    </div>
+</template>
+.
+src/views/PhotoDetailsView.vue
+<script setup>
+import { useRoute } from 'vue-router';
+import PhotoDetails from '../components/PhotoDetail.vue'
+const route = useRoute()
+</script>
+<template>
+    <PhotoDetails :id="route.params.id" />
+</template>
+
+src/router/index.js
+import { createRouter, createWebHistory } from "vue-router"
+import HomeView from '../views/HomeView.vue'
+import AboutView from '../views/AboutView.vue'
+//route configuration
+const routes = [{
+  path: '/',
+  name: 'index',
+  component: HomeView
+},
+{
+  path: '/home',
+  name: 'home',
+  component: HomeView
+},
+{
+  path: '/about',
+  name: 'about',
+  component: AboutView
+},
+{
+  path: '/review',
+  name: 'review',
+  //route level coding spilting 
+  //this generates a separate chunk(reivew.[hash].js)
+  //this is lazy loaded when the route is visited
+  component: () => import('../views/ReviewView.vue')
+},
+{
+  path: '/photo',
+  name: 'photo',
+  //route level coding spilting 
+  //this generates a separate chunk(reivew.[hash].js)
+  //this is lazy loaded when the route is visited
+  component: () => import('../views/PhotoView.vue')
+},
+{
+  path: '/photosdetails/:id',
+  name: 'photodetails',
+  component: () => import('../views/PhotsDetailsView.vue')
+}
+]
+
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes
+})
+export default router;
+.................................&&&&&&&&&&&&&&&&&&&&&...............................
+				Nested Menus -Nested Rotuer-SubMenu
+					 &&
+				      Redirection
+....................................................................................
+
+Building SubMenu
+
+Movie
+ |
+ Sci
+ Drama
+ Action
+ Commadi
+
+src/router/index.js
+import { createRouter, createWebHistory } from "vue-router"
+import HomeView from '../views/HomeView.vue'
+import AboutView from '../views/AboutView.vue'
+//route configuration
+const routes = [{
+  path: '/',
+  name: 'index',
+  // component: HomeView
+  redirect: { name: 'home' }
+},
+{
+  path: '/home',
+  name: 'home',
+  component: HomeView
+},
+{
+  path: '/about',
+  name: 'about',
+  component: AboutView
+},
+{
+  path: '/review',
+  name: 'review',
+  //route level coding spilting 
+  //this generates a separate chunk(reivew.[hash].js)
+  //this is lazy loaded when the route is visited
+  component: () => import('../views/ReviewView.vue')
+},
+{
+  path: '/photo',
+  name: 'photo',
+  //route level coding spilting 
+  //this generates a separate chunk(reivew.[hash].js)
+  //this is lazy loaded when the route is visited
+  component: () => import('../views/PhotoView.vue')
+},
+{
+  path: '/photosdetails/:id',
+  name: 'photodetails',
+  component: () => import('../views/PhotsDetailsView.vue')
+},
+{
+  path: '/movies',
+  name: 'movies',
+  component: () => import('../views/MoviesView.vue'),
+  children: [
+    {
+      path: '',
+      redirect: { name: 'action' }
+    },
+    {
+      path: 'action',
+      name: 'action',
+      component: () => import('../views/ActionView.vue')
+    },
+    {
+      path: 'dramma',
+      name: 'dramma',
+      component: () => import('../views/DrammaView.vue')
+    }
+  ]
+}
+]
+
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes
+})
+export default router;
+
+src/views/MoviesView.vue
+<script setup>
+import { RouterLink, RouterView } from 'vue-router';
+</script>
+<template>
+    <h1>Movies Page</h1>
+    <ul>
+        <li>
+            <RouterLink to="/movies/action">
+                Action
+            </RouterLink>
+        </li>
+        <li>
+            <RouterLink to="/movies/dramma">
+                Dramma
+            </RouterLink>
+        </li>
+    </ul>
+    <RouterView />
+</template>
+
+src/views/ActionView.vue
+<script setup>
+</script>
+<template>
+    <h1>Action Page</h1>
+</template>
+
+src/views/DrammaView.vue
+<script setup>
+</script>
+<template>
+    <h1>Dramma Page</h1>
+</template>
+
+
+
+
+
+
+
+
+
+
+
+
